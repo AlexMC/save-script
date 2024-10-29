@@ -28,19 +28,19 @@ The script looks for a configuration file at `~/.config/fabric/.env`. You can sp
 ## Usage
 
 Basic usage (saves as current-date-note.md):
-    ```bash
-    echo "Some content" | save
-    ```
+   ```bash
+   echo "Some content" | save
+   ```
 
 Save with custom filename (saves as current-date-customname.md):
-    ```bash
-    echo "Some content" | save "customname"
-    ```
+   ```bash
+   echo "Some content" | save "customname"
+   ```
 
 Specify alternative directory:
-     ```bash
-     echo "Some content" | save -d "/alternative/path"
-    ```
+   ```bash
+    echo "Some content" | save -d "/alternative/path"
+   ```
 
 ## Output Format
 
