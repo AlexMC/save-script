@@ -1,0 +1,49 @@
+#!/bin/zsh
+
+# Try to source the environment file if it exists
+if [[ -f ~/.config/fabric/.env ]]; then
+    # Clean up the path: remove quotes, spaces, and trailing slashes
+    DEFAULT_DIR=$(grep "FABRIC_OUTPUT_PATH" ~/.config/fabric/.env | cut -d'=' -f2 | tr -d '"' | tr -d "'" | xargs)
+fi
+
+# Parse arguments
+TARGET_DIR="$DEFAULT_DIR"
+BASENAME="note"
+DATE_PREFIX=$(date +"%Y-%m-%d")
+
+while getopts "d:" opt; do
+    case $opt in
+        d) TARGET_DIR="$OPTARG" ;;
+        \?) echo "Invalid option: -$OPTARG" >&2; exit 1 ;;
+    esac
+done
+shift $((OPTIND-1))
+
+# Check if we have a target directory from either source
+if [[ -z "$TARGET_DIR" ]]; then
+    echo "Error: No target directory specified. Either set FABRIC_OUTPUT_PATH in ~/.config/fabric/.env or use -d flag" >&2
+    exit 1
+fi
+
+# If there's still an argument, it's the basename
+if [[ -n "$1" ]]; then
+    BASENAME="$1"
+fi
+
+EXTENSION=".md"
+
+# Clean up the target directory path (remove trailing slashes)
+TARGET_DIR="${TARGET_DIR%/}"
+
+# Generate the initial filename
+FILENAME="${DATE_PREFIX}-${BASENAME}${EXTENSION}"
+
+# Check if the file exists and find an incremental number
+COUNTER=1
+while [[ -e "${TARGET_DIR}/${FILENAME}" ]]; do
+    FILENAME="${DATE_PREFIX}-${BASENAME}-${COUNTER}${EXTENSION}"
+    COUNTER=$((COUNTER + 1))
+done
+
+# Read the text from the pipe and save it to the file
+cat > "${TARGET_DIR}/${FILENAME}"
